@@ -8,7 +8,7 @@ and packages.
 
 ## Usage
 
-Start with youre not-so-pretty Elm example:
+Start with your not-so-pretty Elm example:
 
 ![Screenshot of the original, not-so-pretty Counter example from the Elm Guide](before.png)
 
