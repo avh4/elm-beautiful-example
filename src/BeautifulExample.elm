@@ -1,8 +1,8 @@
-module BeautifulExample exposing (view)
+module BeautifulExample exposing (Config, view)
 
-{-|
+{-| Create beautiful examples to show off your Elm packages and projects.
 
-@docs view
+@docs Config, view
 
 -}
 
@@ -14,6 +14,17 @@ import Color exposing (Color)
 import Color.Convert
 
 
+{-| Configuration for `BeautifulExample.view`
+
+- title: The title of the example
+- details: An optional explanatory paragraph about the example
+- color: The the color to use to theme the example (grey will be used if you give `Nothing`)
+- maxWidth: The maximum width of the container for the example
+  (This allows the example to be nicely centered.)
+- githubUrl: If given, show a github icon with a link to this URL
+- documentationUrl: If given, show an Elm icon with a link to this URL
+
+-}
 type alias Config =
     { title : String
     , details : Maybe String
