@@ -24,6 +24,6 @@ beautifulView model =
             , color = Just Color.blue
             , maxWidth = 400
             , githubUrl = Just "https://github.com/avh4/elm-beautiful-example"
-            , documentationUrl = Just "http://package.elm-lang.org/avh4/elm-beautiful-example/latest"
+            , documentationUrl = Just "http://package.elm-lang.org/packages/avh4/elm-beautiful-example/latest"
             }
 ```
