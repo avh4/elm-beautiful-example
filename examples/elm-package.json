@@ -1,14 +1,13 @@
 {
     "version": "1.0.0",
-    "summary": "Create beautiful examples to show off your Elm packages and projects",
+    "summary": "Examples for elm-beautiful-example",
     "repository": "https://github.com/avh4/elm-beautiful-example.git",
     "license": "MIT",
     "source-directories": [
-        "src"
+        ".",
+        "../src"
     ],
-    "exposed-modules": [
-        "BeautifulExample"
-    ],
+    "exposed-modules": [],
     "dependencies": {
         "elm-lang/core": "5.1.1 <= v < 6.0.0",
         "elm-lang/html": "2.0.0 <= v < 3.0.0",
