@@ -5,6 +5,8 @@ and packages.
 
 ![Screenshot of a Counter example using elm-beautiful-example](screenshot.png)
 
+(If you are viewing this on package.elm-lang.org, images are broken due to [elm-lang/elm-package#238](https://github.com/elm-lang/elm-package/issues/238).  You can [see the README with working images on github](https://github.com/avh4/elm-beautiful-example#elm-beautiful-example).)
+
 
 ## Usage
 
