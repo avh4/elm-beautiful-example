@@ -18,8 +18,9 @@ Start with your not-so-pretty Elm example:
    elm-package install avh4/elm-beautiful-example
    ```
 
-2. Add the following to your example's Main.elm
-   and fill in the fields as appropriate to your example:
+2. Add the following to your example
+   (typically in the same file where your `view` function is defined)
+   and fill in the fields as appropriate for your example:
 
    ```elm
    beautifulView : Model -> Html Msg
