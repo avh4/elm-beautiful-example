@@ -6,23 +6,23 @@ module BeautifulExample exposing (Config, view)
 
 -}
 
-import Html exposing (..)
-import Html.Attributes exposing (style, href)
-import Svg exposing (Svg)
-import Svg.Attributes
 import Color exposing (Color)
 import Color.Convert
+import Html exposing (..)
+import Html.Attributes exposing (href, style)
+import Svg exposing (Svg)
+import Svg.Attributes
 
 
 {-| Configuration for `BeautifulExample.view`
 
-- title: The title of the example
-- details: An optional explanatory paragraph about the example
-- color: The the color to use to theme the example (grey will be used if you give `Nothing`)
-- maxWidth: The maximum width of the container for the example
-  (This allows the example to be nicely centered.)
-- githubUrl: If given, show a github icon with a link to this URL
-- documentationUrl: If given, show an Elm icon with a link to this URL
+  - title: The title of the example
+  - details: An optional explanatory paragraph about the example
+  - color: The the color to use to theme the example (grey will be used if you give `Nothing`)
+  - maxWidth: The maximum width of the container for the example
+    (This allows the example to be nicely centered.)
+  - githubUrl: If given, show a github icon with a link to this URL
+  - documentationUrl: If given, show an Elm icon with a link to this URL
 
 -}
 type alias Config =
@@ -54,72 +54,72 @@ view config content =
         backgroundColor =
             Color.hsl hue (saturation * 1.2) (lightness * 0.05 + 0.93)
     in
-        div
+    div
+        [ style
+            [ ( "max-width"
+              , config.maxWidth
+                    |> (toString >> flip (++) "px")
+              )
+            , ( "margin", "auto" )
+            , ( "padding", "16px" )
+            ]
+        ]
+        [ h1
             [ style
-                [ ( "max-width"
-                  , config.maxWidth
-                        |> (toString >> flip (++) "px")
-                  )
-                , ( "margin", "auto" )
-                , ( "padding", "16px" )
+                [ ( "font-family", "sans-serif" )
+                , ( "font-weight", "200" )
+                , ( "color", Color.Convert.colorToCssRgb headingColor )
                 ]
             ]
-            [ h1
-                [ style
-                    [ ( "font-family", "sans-serif" )
-                    , ( "font-weight", "200" )
-                    , ( "color", Color.Convert.colorToCssRgb headingColor )
-                    ]
-                ]
-              <|
-                List.concat
-                    [ [ text config.title ]
-                    , case config.documentationUrl of
-                        Nothing ->
-                            []
+          <|
+            List.concat
+                [ [ text config.title ]
+                , case config.documentationUrl of
+                    Nothing ->
+                        []
 
-                        Just url ->
-                            [ Html.text " "
-                            , a
-                                [ href url
-                                , Html.Attributes.title "view documentation"
-                                , style [ ( "margin", "0 8px" ) ]
-                                ]
-                                [ elmLogo detailsColor ]
+                    Just url ->
+                        [ Html.text " "
+                        , a
+                            [ href url
+                            , Html.Attributes.title "view documentation"
+                            , style [ ( "margin", "0 8px" ) ]
                             ]
-                    , case config.githubUrl of
-                        Nothing ->
-                            []
+                            [ elmLogo detailsColor ]
+                        ]
+                , case config.githubUrl of
+                    Nothing ->
+                        []
 
-                        Just url ->
-                            [ Html.text " "
-                            , a
-                                [ href url
-                                , Html.Attributes.title "view on github"
-                                , style [ ( "margin", "0 8px" ) ]
-                                ]
-                                [ githubIcon detailsColor ]
+                    Just url ->
+                        [ Html.text " "
+                        , a
+                            [ href url
+                            , Html.Attributes.title "view on github"
+                            , style [ ( "margin", "0 8px" ) ]
                             ]
-                    ]
-            , p
-                [ style
-                    [ ( "font-family", "sans-serif" )
-                    , ( "font-weight", "200" )
-                    , ( "font-style", "italic" )
-                    , ( "line-height", "1.5em" )
-                    , ( "color", Color.Convert.colorToCssRgb detailsColor )
-                    ]
+                            [ githubIcon detailsColor ]
+                        ]
                 ]
-                [ text (config.details |> Maybe.withDefault "") ]
-            , div
-                [ style
-                    [ ( "padding", "16px" )
-                    , ( "background-color", Color.Convert.colorToCssRgb backgroundColor )
-                    , ( "border-radius", "6px" )
-                    ]
+        , p
+            [ style
+                [ ( "font-family", "sans-serif" )
+                , ( "font-weight", "200" )
+                , ( "font-style", "italic" )
+                , ( "line-height", "1.5em" )
+                , ( "color", Color.Convert.colorToCssRgb detailsColor )
                 ]
-                [ content ]
             ]
+            [ text (config.details |> Maybe.withDefault "") ]
+        , div
+            [ style
+                [ ( "padding", "16px" )
+                , ( "background-color", Color.Convert.colorToCssRgb backgroundColor )
+                , ( "border-radius", "6px" )
+                ]
+            ]
+            [ content ]
+        ]
 
 
 githubIcon : Color -> Html msg

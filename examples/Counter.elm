@@ -1,9 +1,9 @@
 module Counter exposing (main)
 
-import Html exposing (Html, div, text, button)
-import Html.Events exposing (onClick)
 import BeautifulExample
 import Color
+import Html exposing (Html, button, div, text)
+import Html.Events exposing (onClick)
 
 
 beautifulView : Model -> Html Msg
