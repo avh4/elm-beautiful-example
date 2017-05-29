@@ -9,6 +9,7 @@ module BeautifulExample exposing (Config, view)
 import Color exposing (Color)
 import Color.Convert
 import Css
+import Css.Elements
 import Html exposing (..)
 import Html.Attributes exposing (href, style)
 import Html.CssHelpers
@@ -185,9 +186,12 @@ type CssClasses
 customizableStylesTag : Int -> Maybe Color -> Html msg
 customizableStylesTag maxWidth themeColor =
     let
-        { hue, saturation, lightness } =
+        baseColor =
             themeColor
                 |> Maybe.withDefault Color.gray
+
+        { hue, saturation, lightness } =
+            baseColor
                 |> Color.toHsl
 
         headingColor =
@@ -225,6 +229,18 @@ customizableStylesTag maxWidth themeColor =
         , Css.class Example
             [ Css.backgroundColor (elmColor backgroundColor)
             , Css.color (elmColor headingColor)
+            , Css.descendants
+                [ Css.Elements.button
+                    [ Css.backgroundColor (elmColor baseColor)
+                    , Css.color (Css.hex "#fff")
+                    , Css.hover
+                        [ Css.backgroundColor (elmColor detailsColor)
+                        ]
+                    , Css.active
+                        [ Css.backgroundColor (elmColor backgroundColor)
+                        ]
+                    ]
+                ]
             ]
         ]
     ]
@@ -284,6 +300,27 @@ stylesTag =
                             , Css.lastChild [ Css.marginBottom Css.zero ]
                             ]
                         ]
+                    ]
+                ]
+            , Css.descendants
+                [ Css.Elements.button
+                    [ Css.cursor Css.pointer
+                    , Css.borderStyle Css.none
+                    , Css.borderRadius (Css.px 2)
+                    , Css.height (Css.px 28)
+                    , Css.lineHeight (Css.px 28)
+                    , Css.padding2 Css.zero (Css.px 16)
+                    , Css.textTransform Css.uppercase
+                    , Css.fontSize (Css.px 14)
+                    , Css.letterSpacing (Css.px 0.5)
+                    , Css.textAlign Css.center
+                    , Css.textDecoration Css.none
+                    , Css.property "transition" "0.3s ease-out"
+                    , Css.property "box-shadow" "0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2)"
+                    , Css.hover
+                        [ Css.property "box-shadow" "0 3px 3px 0 rgba(0,0,0,0.14), 0 1px 7px 0 rgba(0,0,0,0.12), 0 3px 1px -1px rgba(0,0,0,0.2)"
+                        ]
+                    , Css.margin2 (Css.px 4) Css.zero
                     ]
                 ]
             ]
