@@ -3,7 +3,7 @@
 This package makes it easy to create beautiful examples for your Elm projects
 and packages.
 
-![Screenshot of a Counter example using elm-beautiful-example](screenshot.png)
+![Screenshot of a Counter example using elm-beautiful-example](https://github.com/avh4/elm-beautiful-example/raw/master/screenshot.png)
 
 (If you are viewing this on package.elm-lang.org, images are broken due to [elm-lang/elm-package#238](https://github.com/elm-lang/elm-package/issues/238).  You can [see the README with working images on github](https://github.com/avh4/elm-beautiful-example#elm-beautiful-example).)
 
@@ -12,7 +12,7 @@ and packages.
 
 Start with your not-so-pretty Elm example:
 
-![Screenshot of the original, not-so-pretty Counter example from the Elm Guide](before.png)
+![Screenshot of the original, not-so-pretty Counter example from the Elm Guide](https://github.com/avh4/elm-beautiful-example/raw/master/before.png)
 
 1. Install elm-beautiful-example
 
@@ -57,4 +57,4 @@ Start with your not-so-pretty Elm example:
 
 Now your example will look like this:
 
-![Screenshot of a Counter example using elm-beautiful-example](screenshot.png)
+![Screenshot of a Counter example using elm-beautiful-example](https://github.com/avh4/elm-beautiful-example/raw/master/screenshot.png)
