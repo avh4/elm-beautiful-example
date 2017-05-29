@@ -29,7 +29,7 @@ filling in the fields as appropriate for your example:
     main : Program Never Model Msg
     main =
    -    Html.program
-   -    BeautifulExample.program
+   +    BeautifulExample.program
    +        { title = "Counter"
    +        , details =
    +            Just """This shows how elm-beautiful-example can be used to
