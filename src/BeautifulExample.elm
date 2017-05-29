@@ -249,6 +249,10 @@ customizableStylesTag maxWidth themeColor =
                     -- , Css.property "::-moz-placeholder" (elmColor detailsColor)
                     -- , Css.property ":-moz-placeholder" (elmColor detailsColor)
                     ]
+                , Css.Elements.textarea
+                    [ Css.color (elmColor baseColor)
+                    , Css.borderColor (elmColor baseColor)
+                    ]
                 ]
             ]
         ]
@@ -337,6 +341,17 @@ stylesTag =
                     , Css.border2 (Css.px 2) Css.solid
                     , Css.margin2 (Css.px 4) Css.zero
                     , Css.fontSize (Css.px 16)
+                    , Css.boxSizing Css.borderBox
+                    ]
+                , Css.Elements.textarea
+                    [ Css.padding (Css.px 4)
+                    , Css.borderRadius (Css.px 4)
+                    , Css.border2 (Css.px 2) Css.solid
+                    , Css.margin2 (Css.px 4) Css.zero
+                    , Css.fontSize (Css.px 16)
+                    , Css.display Css.block
+                    , Css.boxSizing Css.borderBox
+                    , Css.width (Css.pct 100)
                     ]
                 ]
             ]
