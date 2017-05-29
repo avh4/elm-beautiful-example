@@ -240,6 +240,15 @@ customizableStylesTag maxWidth themeColor =
                         [ Css.backgroundColor (elmColor backgroundColor)
                         ]
                     ]
+                , Css.Elements.input
+                    [ Css.color (elmColor baseColor)
+                    , Css.borderColor (elmColor baseColor)
+
+                    -- , Css.property "::-webkit-input-placeholder" (elmColor detailsColor)
+                    -- , Css.property ":-ms-input-placeholder" (elmColor detailsColor)
+                    -- , Css.property "::-moz-placeholder" (elmColor detailsColor)
+                    -- , Css.property ":-moz-placeholder" (elmColor detailsColor)
+                    ]
                 ]
             ]
         ]
@@ -321,6 +330,13 @@ stylesTag =
                         [ Css.property "box-shadow" "0 3px 3px 0 rgba(0,0,0,0.14), 0 1px 7px 0 rgba(0,0,0,0.12), 0 3px 1px -1px rgba(0,0,0,0.2)"
                         ]
                     , Css.margin2 (Css.px 4) Css.zero
+                    ]
+                , Css.Elements.input
+                    [ Css.padding (Css.px 4)
+                    , Css.borderRadius (Css.px 4)
+                    , Css.border2 (Css.px 2) Css.solid
+                    , Css.margin2 (Css.px 4) Css.zero
+                    , Css.fontSize (Css.px 16)
                     ]
                 ]
             ]
