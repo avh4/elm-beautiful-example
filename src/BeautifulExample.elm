@@ -8,8 +8,10 @@ module BeautifulExample exposing (Config, view)
 
 import Color exposing (Color)
 import Color.Convert
+import Css
 import Html exposing (..)
 import Html.Attributes exposing (href, style)
+import Html.CssHelpers
 import Svg exposing (Svg)
 import Svg.Attributes
 
@@ -55,22 +57,19 @@ view config content =
             Color.hsl hue (saturation * 1.2) (lightness * 0.05 + 0.93)
     in
     div
-        [ style
+        [ class [ Page ]
+        , style
             [ ( "max-width"
               , config.maxWidth
                     |> (toString >> flip (++) "px")
               )
-            , ( "margin", "auto" )
-            , ( "padding", "16px" )
             ]
         ]
-        [ h1
-            [ style
-                [ ( "font-family", "sans-serif" )
-                , ( "font-weight", "200" )
-                , ( "color", Color.Convert.colorToCssRgb headingColor )
-                , ( "font-size", "32px" )
-                , ( "line-height", "37px" )
+        [ stylesTag
+        , h1
+            [ class [ PageHeader ]
+            , style
+                [ ( "color", Color.Convert.colorToCssRgb headingColor )
                 ]
             ]
           <|
@@ -94,21 +93,17 @@ view config content =
                         ]
                 ]
         , p
-            [ style
-                [ ( "font-family", "sans-serif" )
-                , ( "font-weight", "200" )
-                , ( "font-style", "italic" )
-                , ( "line-height", "1.5em" )
-                , ( "color", Color.Convert.colorToCssRgb detailsColor )
+            [ class [ PageDescription ]
+            , style
+                [ ( "color", Color.Convert.colorToCssRgb detailsColor )
                 ]
             ]
             [ text (config.details |> Maybe.withDefault "") ]
         , div
-            [ style
-                [ ( "padding", "16px" )
-                , ( "background-color", Color.Convert.colorToCssRgb backgroundColor )
+            [ class [ Example ]
+            , style
+                [ ( "background-color", Color.Convert.colorToCssRgb backgroundColor )
                 , ( "color", Color.Convert.colorToCssRgb headingColor )
-                , ( "border-radius", "6px" )
                 ]
             ]
             [ content ]
@@ -119,22 +114,15 @@ headerLink : Color -> (Color -> Html msg) -> String -> String -> Html msg
 headerLink color icon title url =
     a
         [ href url
+        , class [ PageHeaderLink ]
         , style
-            [ ( "margin", "0 0 0 8px" )
-            , ( "text-decoration", "none" )
-            , ( "vertical-align", "bottom" )
-            , ( "color", Color.Convert.colorToCssRgb color )
+            [ ( "color", Color.Convert.colorToCssRgb color )
             ]
         ]
         [ icon color
         , Html.text " "
         , Html.span
-            [ Html.Attributes.style
-                [ ( "font-size", "12px" )
-                , ( "line-height", "37px" )
-                , ( "vertical-align", "bottom" )
-                ]
-            ]
+            [ class [ PageHeaderLinkText ] ]
             [ Html.text title ]
         ]
 
@@ -203,3 +191,78 @@ elmLogo color =
             ]
             []
         ]
+
+
+type CssClasses
+    = Page
+    | PageHeader
+    | PageHeaderLink
+    | PageHeaderLinkText
+    | PageDescription
+    | Example
+
+
+{ class } =
+    Html.CssHelpers.withNamespace ""
+
+
+stylesTag : Html msg
+stylesTag =
+    [ Css.stylesheet
+        [ Css.class Page
+            [ Css.margin Css.auto
+            , Css.padding2 (Css.px 48) Css.zero
+            , Css.fontFamily Css.sansSerif
+            ]
+        , Css.class PageHeader
+            [ Css.fontWeight (Css.int 200)
+            , Css.fontSize (Css.px 32)
+            , Css.lineHeight (Css.px 37)
+            , Css.marginTop Css.zero
+            ]
+        , Css.class PageHeaderLink
+            [ Css.padding2 (Css.px 2) (Css.px 8)
+            , Css.textDecoration Css.none
+            , Css.verticalAlign Css.bottom
+            , Css.borderRadius (Css.px 4)
+            , Css.hover
+                [ Css.backgroundColor (Css.hex "#ddd")
+                , Css.descendants
+                    [ Css.class PageHeaderLinkText
+                        [ Css.textDecoration Css.underline
+                        ]
+                    ]
+                ]
+            ]
+        , Css.class PageHeaderLinkText
+            [ Css.fontSize (Css.px 12)
+            , Css.lineHeight (Css.px 37)
+            , Css.verticalAlign Css.bottom
+            ]
+        , Css.class PageDescription
+            [ Css.fontWeight (Css.int 200)
+            , Css.fontStyle Css.italic
+            , Css.lineHeight (Css.em 1.5)
+            ]
+        , Css.class Example
+            [ Css.padding (Css.px 16)
+            , Css.borderRadius (Css.px 6)
+            , Css.lineHeight (Css.em 1.5)
+            , Css.children
+                [ Css.everything
+                    [ Css.firstChild [ Css.marginTop Css.zero ]
+                    , Css.lastChild [ Css.marginBottom Css.zero ]
+                    , Css.children
+                        [ Css.everything
+                            [ Css.firstChild [ Css.marginTop Css.zero ]
+                            , Css.lastChild [ Css.marginBottom Css.zero ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
+        |> Css.compile
+        |> .css
+        |> Html.CssHelpers.style
