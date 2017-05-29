@@ -404,6 +404,10 @@ stylesTag =
                     , Css.boxSizing Css.borderBox
                     , Css.width (Css.pct 100)
                     ]
+                , Css.Elements.pre
+                    [ Css.lineHeight (Css.px 14)
+                    , Css.fontSize (Css.px 12)
+                    ]
                 ]
             ]
         ]
