@@ -57,22 +57,10 @@ view config content =
             Color.hsl hue (saturation * 1.2) (lightness * 0.05 + 0.93)
     in
     div
-        [ class [ Page ]
-        , style
-            [ ( "max-width"
-              , config.maxWidth
-                    |> (toString >> flip (++) "px")
-              )
-            ]
-        ]
+        [ class [ Page ] ]
         [ stylesTag
-        , h1
-            [ class [ PageHeader ]
-            , style
-                [ ( "color", Color.Convert.colorToCssRgb headingColor )
-                ]
-            ]
-          <|
+        , customizableStylesTag config.maxWidth config.color
+        , h1 [ class [ PageHeader ] ] <|
             List.concat
                 [ [ text config.title ]
                 , case config.documentationUrl of
@@ -93,19 +81,10 @@ view config content =
                         ]
                 ]
         , p
-            [ class [ PageDescription ]
-            , style
-                [ ( "color", Color.Convert.colorToCssRgb detailsColor )
-                ]
-            ]
+            [ class [ PageDescription ] ]
             [ text (config.details |> Maybe.withDefault "") ]
         , div
-            [ class [ Example ]
-            , style
-                [ ( "background-color", Color.Convert.colorToCssRgb backgroundColor )
-                , ( "color", Color.Convert.colorToCssRgb headingColor )
-                ]
-            ]
+            [ class [ Example ] ]
             [ content ]
         ]
 
@@ -115,9 +94,6 @@ headerLink color icon title url =
     a
         [ href url
         , class [ PageHeaderLink ]
-        , style
-            [ ( "color", Color.Convert.colorToCssRgb color )
-            ]
         ]
         [ icon color
         , Html.text " "
@@ -206,6 +182,57 @@ type CssClasses
     Html.CssHelpers.withNamespace ""
 
 
+customizableStylesTag : Int -> Maybe Color -> Html msg
+customizableStylesTag maxWidth themeColor =
+    let
+        { hue, saturation, lightness } =
+            themeColor
+                |> Maybe.withDefault Color.gray
+                |> Color.toHsl
+
+        headingColor =
+            Color.hsl hue saturation (lightness * 0.7)
+
+        detailsColor =
+            Color.hsl hue (saturation * 0.8) (lightness * 0.5 + 0.3)
+
+        backgroundColor =
+            Color.hsl hue (saturation * 1.2) (lightness * 0.05 + 0.93)
+
+        elmColor c =
+            let
+                { red, green, blue, alpha } =
+                    Color.toRgb c
+            in
+            Css.rgba red green blue alpha
+    in
+    [ Css.stylesheet
+        [ Css.class Page
+            [ Css.maxWidth (Css.px <| toFloat maxWidth)
+            ]
+        , Css.class PageHeader
+            [ Css.color (elmColor headingColor)
+            ]
+        , Css.class PageHeaderLink
+            [ Css.color (elmColor detailsColor)
+            , Css.hover
+                [ Css.backgroundColor (elmColor backgroundColor)
+                ]
+            ]
+        , Css.class PageDescription
+            [ Css.color (elmColor detailsColor)
+            ]
+        , Css.class Example
+            [ Css.backgroundColor (elmColor backgroundColor)
+            , Css.color (elmColor headingColor)
+            ]
+        ]
+    ]
+        |> Css.compile
+        |> .css
+        |> Html.CssHelpers.style
+
+
 stylesTag : Html msg
 stylesTag =
     [ Css.stylesheet
@@ -221,13 +248,12 @@ stylesTag =
             , Css.marginTop Css.zero
             ]
         , Css.class PageHeaderLink
-            [ Css.padding2 (Css.px 2) (Css.px 8)
+            [ Css.padding3 (Css.px 3) (Css.px 8) (Css.px 1)
             , Css.textDecoration Css.none
             , Css.verticalAlign Css.bottom
             , Css.borderRadius (Css.px 4)
             , Css.hover
-                [ Css.backgroundColor (Css.hex "#ddd")
-                , Css.descendants
+                [ Css.descendants
                     [ Css.class PageHeaderLinkText
                         [ Css.textDecoration Css.underline
                         ]
