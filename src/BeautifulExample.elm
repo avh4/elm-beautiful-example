@@ -69,6 +69,8 @@ view config content =
                 [ ( "font-family", "sans-serif" )
                 , ( "font-weight", "200" )
                 , ( "color", Color.Convert.colorToCssRgb headingColor )
+                , ( "font-size", "32px" )
+                , ( "line-height", "37px" )
                 ]
             ]
           <|
@@ -80,12 +82,7 @@ view config content =
 
                     Just url ->
                         [ Html.text " "
-                        , a
-                            [ href url
-                            , Html.Attributes.title "view documentation"
-                            , style [ ( "margin", "0 8px" ) ]
-                            ]
-                            [ elmLogo detailsColor ]
+                        , headerLink detailsColor elmLogo "Documentation" url
                         ]
                 , case config.githubUrl of
                     Nothing ->
@@ -93,12 +90,7 @@ view config content =
 
                     Just url ->
                         [ Html.text " "
-                        , a
-                            [ href url
-                            , Html.Attributes.title "view on github"
-                            , style [ ( "margin", "0 8px" ) ]
-                            ]
-                            [ githubIcon detailsColor ]
+                        , headerLink detailsColor githubIcon "Source" url
                         ]
                 ]
         , p
@@ -115,10 +107,35 @@ view config content =
             [ style
                 [ ( "padding", "16px" )
                 , ( "background-color", Color.Convert.colorToCssRgb backgroundColor )
+                , ( "color", Color.Convert.colorToCssRgb headingColor )
                 , ( "border-radius", "6px" )
                 ]
             ]
             [ content ]
+        ]
+
+
+headerLink : Color -> (Color -> Html msg) -> String -> String -> Html msg
+headerLink color icon title url =
+    a
+        [ href url
+        , style
+            [ ( "margin", "0 0 0 8px" )
+            , ( "text-decoration", "none" )
+            , ( "vertical-align", "bottom" )
+            , ( "color", Color.Convert.colorToCssRgb color )
+            ]
+        ]
+        [ icon color
+        , Html.text " "
+        , Html.span
+            [ Html.Attributes.style
+                [ ( "font-size", "12px" )
+                , ( "line-height", "37px" )
+                , ( "vertical-align", "bottom" )
+                ]
+            ]
+            [ Html.text title ]
         ]
 
 
