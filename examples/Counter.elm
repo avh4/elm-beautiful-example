@@ -6,29 +6,23 @@ import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
 
 
-beautifulView : Model -> Html Msg
-beautifulView model =
-    view model
-        |> BeautifulExample.view
-            { title = "Counter"
-            , details =
-                Just """This shows how elm-beautiful-example can be used to
-                  wrap the view of any other program (in this case, the Counter example
-                  from the Elm Guide)."""
-            , color = Just Color.blue
-            , maxWidth = 400
-            , githubUrl = Just "https://github.com/avh4/elm-beautiful-example"
-            , documentationUrl = Just "http://package.elm-lang.org/packages/avh4/elm-beautiful-example/latest"
-            }
-
-
 main : Program Never Model Msg
 main =
-    Html.program
-        { view = beautifulView
+    BeautifulExample.program
+        { title = "Counter"
+        , details =
+            Just """This shows how elm-beautiful-example can be used to
+                  wrap the view of any other program (in this case, the Counter example
+                  from the Elm Guide)."""
+        , color = Just Color.blue
+        , maxWidth = 400
+        , githubUrl = Just "https://github.com/avh4/elm-beautiful-example"
+        , documentationUrl = Just "http://package.elm-lang.org/packages/avh4/elm-beautiful-example/latest"
+        }
+        { init = ( model, Cmd.none )
         , update = update
         , subscriptions = \_ -> Sub.none
-        , init = ( model, Cmd.none )
+        , view = view
         }
 
 

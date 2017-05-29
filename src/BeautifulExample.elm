@@ -1,8 +1,14 @@
-module BeautifulExample exposing (Config, view)
+module BeautifulExample
+    exposing
+        ( Config
+        , beginnerProgram
+        , program
+        , view
+        )
 
 {-| Create beautiful examples to show off your Elm packages and projects.
 
-@docs Config, view
+@docs Config, beginnerProgram, program, view
 
 -}
 
@@ -38,7 +44,52 @@ type alias Config =
     }
 
 
-{-| Turn arbitrary Html into a beautiful example
+{-| Turn an `Html.beginnerProgram` into a beautiful example
+-}
+beginnerProgram :
+    Config
+    ->
+        { model : model
+        , update : msg -> model -> model
+        , view : model -> Html msg
+        }
+    -> Program Never model msg
+beginnerProgram config prog =
+    Html.beginnerProgram
+        { model = prog.model
+        , update = prog.update
+        , view =
+            prog.view
+                >> view config
+        }
+
+
+{-| Turn an `Html.program` into a beautiful example
+-}
+program :
+    Config
+    ->
+        { init : ( model, Cmd msg )
+        , update : msg -> model -> ( model, Cmd msg )
+        , subscriptions : model -> Sub msg
+        , view : model -> Html msg
+        }
+    -> Program Never model msg
+program config prog =
+    Html.program
+        { init = prog.init
+        , update = prog.update
+        , subscriptions = prog.subscriptions
+        , view =
+            prog.view
+                >> view config
+        }
+
+
+{-| Turn arbitrary Html into a beautiful example.
+
+Typically, you will want to use [`program`](#program) or [`beginnerProgram`](#beginnerProgram) instead.
+
 -}
 view : Config -> Html msg -> Html msg
 view config content =
