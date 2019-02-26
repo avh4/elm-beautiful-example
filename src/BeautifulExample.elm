@@ -1,26 +1,19 @@
-module BeautifulExample
-    exposing
-        ( Config
-        , beginnerProgram
-        , program
-        , view
-        )
+module BeautifulExample exposing (Config, sandbox, element, document, application, view)
 
 {-| Create beautiful examples to show off your Elm packages and projects.
 
-@docs Config, beginnerProgram, program, view
+@docs Config, sandbox, element, document, application, view
 
 -}
 
+import Browser
+import Browser.Navigation
 import Color exposing (Color)
-import Color.Convert
-import Css
-import Css.Elements
 import Html exposing (..)
-import Html.Attributes exposing (href, style)
-import Html.CssHelpers
+import Html.Attributes exposing (class, href, style)
 import Svg exposing (Svg)
 import Svg.Attributes
+import Url exposing (Url)
 
 
 {-| Configuration for `BeautifulExample.view`
@@ -44,19 +37,19 @@ type alias Config =
     }
 
 
-{-| Turn an `Html.beginnerProgram` into a beautiful example
+{-| Turn a `Browser.sandbox` into a beautiful example
 -}
-beginnerProgram :
+sandbox :
     Config
     ->
-        { model : model
-        , update : msg -> model -> model
+        { init : model
         , view : model -> Html msg
+        , update : msg -> model -> model
         }
-    -> Program Never model msg
-beginnerProgram config prog =
-    Html.beginnerProgram
-        { model = prog.model
+    -> Program () model msg
+sandbox config prog =
+    Browser.sandbox
+        { init = prog.init
         , update = prog.update
         , view =
             prog.view
@@ -64,25 +57,79 @@ beginnerProgram config prog =
         }
 
 
-{-| Turn an `Html.program` into a beautiful example
+{-| Turn a `Browser.element` into a beautiful example
 -}
-program :
+element :
     Config
     ->
-        { init : ( model, Cmd msg )
+        { init : flags -> ( model, Cmd msg )
+        , view : model -> Html msg
         , update : msg -> model -> ( model, Cmd msg )
         , subscriptions : model -> Sub msg
-        , view : model -> Html msg
         }
-    -> Program Never model msg
-program config prog =
-    Html.program
+    -> Program flags model msg
+element config prog =
+    Browser.element
         { init = prog.init
         , update = prog.update
         , subscriptions = prog.subscriptions
         , view =
             prog.view
                 >> view config
+        }
+
+
+{-| Turn a `Browser.document` into a beautiful example
+-}
+document :
+    Config
+    ->
+        { init : flags -> ( model, Cmd msg )
+        , view : model -> Browser.Document msg
+        , update : msg -> model -> ( model, Cmd msg )
+        , subscriptions : model -> Sub msg
+        }
+    -> Program flags model msg
+document config prog =
+    Browser.document
+        { init = prog.init
+        , update = prog.update
+        , subscriptions = prog.subscriptions
+        , view = prog.view >> wrapDocument config
+        }
+
+
+wrapDocument : Config -> Browser.Document msg -> Browser.Document msg
+wrapDocument config doc =
+    { doc
+        | body =
+            [ view config <|
+                Html.div [] doc.body
+            ]
+    }
+
+
+{-| Turn a `Browser.application` into a beautiful example
+-}
+application :
+    Config
+    ->
+        { init : flags -> Url -> Browser.Navigation.Key -> ( model, Cmd msg )
+        , view : model -> Browser.Document msg
+        , update : msg -> model -> ( model, Cmd msg )
+        , subscriptions : model -> Sub msg
+        , onUrlRequest : Browser.UrlRequest -> msg
+        , onUrlChange : Url -> msg
+        }
+    -> Program flags model msg
+application config prog =
+    Browser.application
+        { init = prog.init
+        , update = prog.update
+        , subscriptions = prog.subscriptions
+        , onUrlRequest = prog.onUrlRequest
+        , onUrlChange = prog.onUrlChange
+        , view = prog.view >> wrapDocument config
         }
 
 
@@ -97,7 +144,7 @@ view config content =
         { hue, saturation, lightness } =
             config.color
                 |> Maybe.withDefault Color.gray
-                |> Color.toHsl
+                |> Color.toHsla
 
         headingColor =
             Color.hsl hue saturation (lightness * 0.7)
@@ -161,11 +208,11 @@ githubIcon color =
         [ Html.Attributes.attribute "aria-hidden" "true"
         , Svg.Attributes.version "1.1"
         , Svg.Attributes.viewBox "0 0 16 16"
-        , style [ ( "height", "0.8em" ) ]
+        , style "height" "0.8em"
         ]
         [ Svg.path
             [ Svg.Attributes.d "M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
-            , Svg.Attributes.fill <| Color.Convert.colorToCssRgb color
+            , Svg.Attributes.fill <| Color.toCssString color
             , Html.Attributes.attribute "fill-rule" "evenodd"
             ]
             []
@@ -177,20 +224,20 @@ elmLogo color =
     Svg.svg
         [ Svg.Attributes.version "1.1"
         , Svg.Attributes.viewBox "0 0 323.141 322.95"
-        , style [ ( "height", "0.8em" ) ]
+        , style "height" "0.8em"
         ]
         [ Svg.polygon
-            [ Svg.Attributes.fill <| Color.Convert.colorToCssRgb color
+            [ Svg.Attributes.fill <| Color.toCssString color
             , Svg.Attributes.points "161.649,152.782 231.514,82.916 91.783,82.916"
             ]
             []
         , Svg.polygon
-            [ Svg.Attributes.fill <| Color.Convert.colorToCssRgb color
+            [ Svg.Attributes.fill <| Color.toCssString color
             , Svg.Attributes.points "8.867,0 79.241,70.375 232.213,70.375 161.838,0"
             ]
             []
         , Svg.rect
-            [ Svg.Attributes.fill <| Color.Convert.colorToCssRgb color
+            [ Svg.Attributes.fill <| Color.toCssString color
             , Svg.Attributes.x "192.99"
             , Svg.Attributes.y "107.392"
             , Svg.Attributes.width "107.676"
@@ -199,22 +246,22 @@ elmLogo color =
             ]
             []
         , Svg.polygon
-            [ Svg.Attributes.fill <| Color.Convert.colorToCssRgb color
+            [ Svg.Attributes.fill <| Color.toCssString color
             , Svg.Attributes.points "323.298,143.724 323.298,0 179.573,0"
             ]
             []
         , Svg.polygon
-            [ Svg.Attributes.fill <| Color.Convert.colorToCssRgb color
+            [ Svg.Attributes.fill <| Color.toCssString color
             , Svg.Attributes.points "152.781,161.649 0,8.868 0,314.432"
             ]
             []
         , Svg.polygon
-            [ Svg.Attributes.fill <| Color.Convert.colorToCssRgb color
+            [ Svg.Attributes.fill <| Color.toCssString color
             , Svg.Attributes.points "255.522,246.655 323.298,314.432 323.298,178.879"
             ]
             []
         , Svg.polygon
-            [ Svg.Attributes.fill <| Color.Convert.colorToCssRgb color
+            [ Svg.Attributes.fill <| Color.toCssString color
             , Svg.Attributes.points "161.649,170.517 8.869,323.298 314.43,323.298"
             ]
             []
@@ -230,8 +277,35 @@ type CssClasses
     | Example
 
 
-{ class } =
-    Html.CssHelpers.withNamespace ""
+class : List CssClasses -> Html.Attribute msg
+class classes =
+    let
+        toString cl =
+            case cl of
+                Page ->
+                    "Page"
+
+                PageHeader ->
+                    "PageHeader"
+
+                PageHeaderLink ->
+                    "PageHeaderLink"
+
+                PageHeaderLinkText ->
+                    "PageHeaderLinkText"
+
+                PageDescription ->
+                    "PageDescription"
+
+                Example ->
+                    "Example"
+    in
+    classes
+        |> List.map toString
+        -- TODO
+        |> List.map ((++) "avh4--elm-beautiful-example--")
+        |> String.join " "
+        |> Html.Attributes.class
 
 
 customizableStylesTag : Int -> Maybe Color -> Html msg
@@ -243,7 +317,7 @@ customizableStylesTag maxWidth themeColor =
 
         { hue, saturation, lightness } =
             baseColor
-                |> Color.toHsl
+                |> Color.toHsla
 
         headingColor =
             Color.hsl hue saturation (lightness * 0.7)
@@ -253,165 +327,148 @@ customizableStylesTag maxWidth themeColor =
 
         backgroundColor =
             Color.hsl hue (saturation * 1.2) (lightness * 0.05 + 0.93)
-
-        elmColor c =
-            let
-                { red, green, blue, alpha } =
-                    Color.toRgb c
-            in
-            Css.rgba red green blue alpha
     in
-    [ Css.stylesheet
-        [ Css.class Page
-            [ Css.maxWidth (Css.px <| toFloat maxWidth)
-            ]
-        , Css.class PageHeader
-            [ Css.color (elmColor headingColor)
-            ]
-        , Css.class PageHeaderLink
-            [ Css.color (elmColor detailsColor)
-            , Css.hover
-                [ Css.backgroundColor (elmColor backgroundColor)
-                ]
-            ]
-        , Css.class PageDescription
-            [ Css.color (elmColor detailsColor)
-            ]
-        , Css.class Example
-            [ Css.backgroundColor (elmColor backgroundColor)
-            , Css.color (elmColor headingColor)
-            , Css.descendants
-                [ Css.Elements.button
-                    [ Css.backgroundColor (elmColor baseColor)
-                    , Css.color (Css.hex "#fff")
-                    , Css.hover
-                        [ Css.backgroundColor (elmColor detailsColor)
-                        ]
-                    , Css.active
-                        [ Css.backgroundColor (elmColor backgroundColor)
-                        ]
-                    ]
-                , Css.Elements.input
-                    [ Css.color (elmColor baseColor)
-                    , Css.borderColor (elmColor baseColor)
+    Html.node "style"
+        []
+        [ Html.text <|
+            String.join "\n"
+                [ ".avh4--elm-beautiful-example--Page {"
+                , "  max-width: " ++ String.fromInt maxWidth ++ "px;"
+                , "}"
+                , ".avh4--elm-beautiful-example--PageHeader {"
+                , "  color: " ++ Color.toCssString headingColor ++ ";"
+                , "}"
+                , ".avh4--elm-beautiful-example--PageHeaderLink {"
+                , "  color: " ++ Color.toCssString detailsColor ++ ";"
+                , "}"
+                , ".avh4--elm-beautiful-example--PageHeaderLink:hover {"
+                , "  background-color: " ++ Color.toCssString backgroundColor ++ ";"
+                , "}"
+                , ".avh4--elm-beautiful-example--PageDescription {"
+                , "  color: " ++ Color.toCssString detailsColor ++ ";"
+                , "}"
+                , ".avh4--elm-beautiful-example--Example {"
+                , "  background-color: " ++ Color.toCssString backgroundColor ++ ";"
+                , "  color: " ++ Color.toCssString headingColor ++ ";"
+                , "}"
+                , ".avh4--elm-beautiful-example--Example button {"
+                , "  background-color: " ++ Color.toCssString baseColor ++ ";"
+                , "  color: #fff;"
+                , "}"
+                , ".avh4--elm-beautiful-example--Example button:hover {"
+                , "  background-color: " ++ Color.toCssString detailsColor ++ ";"
+                , "}"
+                , ".avh4--elm-beautiful-example--Example button:active {"
+                , "  background-color: " ++ Color.toCssString backgroundColor ++ ";"
+                , "}"
+                , ".avh4--elm-beautiful-example--Example input {"
+                , "  color: " ++ Color.toCssString baseColor ++ ";"
+                , "  border-color: " ++ Color.toCssString baseColor ++ ";"
 
-                    -- , Css.property "::-webkit-input-placeholder" (elmColor detailsColor)
-                    -- , Css.property ":-ms-input-placeholder" (elmColor detailsColor)
-                    -- , Css.property "::-moz-placeholder" (elmColor detailsColor)
-                    -- , Css.property ":-moz-placeholder" (elmColor detailsColor)
-                    ]
-                , Css.Elements.textarea
-                    [ Css.color (elmColor baseColor)
-                    , Css.borderColor (elmColor baseColor)
-                    ]
+                -- , Css.property "::-webkit-input-placeholder" (elmColor detailsColor)
+                -- , Css.property ":-ms-input-placeholder" (elmColor detailsColor)
+                -- , Css.property "::-moz-placeholder" (elmColor detailsColor)
+                -- , Css.property ":-moz-placeholder" (elmColor detailsColor)
+                , "}"
+                , ".avh4--elm-beautiful-example--Example textarea {"
+                , "  color: " ++ Color.toCssString baseColor ++ ";"
+                , "  border-color: " ++ Color.toCssString baseColor ++ ";"
+                , "}"
                 ]
-            ]
         ]
-    ]
-        |> Css.compile
-        |> .css
-        |> Html.CssHelpers.style
 
 
 stylesTag : Html msg
 stylesTag =
-    [ Css.stylesheet
-        [ Css.class Page
-            [ Css.margin Css.auto
-            , Css.padding2 (Css.px 48) Css.zero
-            , Css.fontFamily Css.sansSerif
-            ]
-        , Css.class PageHeader
-            [ Css.fontWeight (Css.int 200)
-            , Css.fontSize (Css.px 32)
-            , Css.lineHeight (Css.px 37)
-            , Css.marginTop Css.zero
-            ]
-        , Css.class PageHeaderLink
-            [ Css.padding3 (Css.px 3) (Css.px 8) (Css.px 1)
-            , Css.textDecoration Css.none
-            , Css.verticalAlign Css.bottom
-            , Css.borderRadius (Css.px 4)
-            , Css.hover
-                [ Css.descendants
-                    [ Css.class PageHeaderLinkText
-                        [ Css.textDecoration Css.underline
-                        ]
-                    ]
-                ]
-            ]
-        , Css.class PageHeaderLinkText
-            [ Css.fontSize (Css.px 12)
-            , Css.lineHeight (Css.px 37)
-            , Css.verticalAlign Css.bottom
-            ]
-        , Css.class PageDescription
-            [ Css.fontWeight (Css.int 200)
-            , Css.fontStyle Css.italic
-            , Css.lineHeight (Css.em 1.5)
-            ]
-        , Css.class Example
-            [ Css.padding (Css.px 16)
-            , Css.borderRadius (Css.px 6)
-            , Css.lineHeight (Css.em 1.5)
-            , Css.children
-                [ Css.everything
-                    [ Css.firstChild [ Css.marginTop Css.zero ]
-                    , Css.lastChild [ Css.marginBottom Css.zero ]
-                    , Css.children
-                        [ Css.everything
-                            [ Css.firstChild [ Css.marginTop Css.zero ]
-                            , Css.lastChild [ Css.marginBottom Css.zero ]
-                            ]
-                        ]
-                    ]
-                ]
-            , Css.descendants
-                [ Css.Elements.button
-                    [ Css.cursor Css.pointer
-                    , Css.borderStyle Css.none
-                    , Css.borderRadius (Css.px 2)
-                    , Css.height (Css.px 28)
-                    , Css.lineHeight (Css.px 28)
-                    , Css.padding2 Css.zero (Css.px 16)
-                    , Css.textTransform Css.uppercase
-                    , Css.fontSize (Css.px 14)
-                    , Css.letterSpacing (Css.px 0.5)
-                    , Css.textAlign Css.center
-                    , Css.textDecoration Css.none
-                    , Css.property "transition" "0.3s ease-out"
-                    , Css.property "box-shadow" "0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2)"
-                    , Css.hover
-                        [ Css.property "box-shadow" "0 3px 3px 0 rgba(0,0,0,0.14), 0 1px 7px 0 rgba(0,0,0,0.12), 0 3px 1px -1px rgba(0,0,0,0.2)"
-                        ]
-                    , Css.margin2 (Css.px 4) Css.zero
-                    ]
-                , Css.Elements.input
-                    [ Css.padding (Css.px 4)
-                    , Css.borderRadius (Css.px 4)
-                    , Css.border2 (Css.px 2) Css.solid
-                    , Css.margin2 (Css.px 4) Css.zero
-                    , Css.fontSize (Css.px 16)
-                    , Css.boxSizing Css.borderBox
-                    ]
-                , Css.Elements.textarea
-                    [ Css.padding (Css.px 4)
-                    , Css.borderRadius (Css.px 4)
-                    , Css.border2 (Css.px 2) Css.solid
-                    , Css.margin2 (Css.px 4) Css.zero
-                    , Css.fontSize (Css.px 16)
-                    , Css.display Css.block
-                    , Css.boxSizing Css.borderBox
-                    , Css.width (Css.pct 100)
-                    ]
-                , Css.Elements.pre
-                    [ Css.lineHeight (Css.px 14)
-                    , Css.fontSize (Css.px 12)
-                    ]
-                ]
-            ]
-        ]
-    ]
-        |> Css.compile
-        |> .css
-        |> Html.CssHelpers.style
+    Html.node "style"
+        []
+        [ Html.text """
+.avh4--elm-beautiful-example--Page {
+  margin: auto;
+  padding: 48px 0;
+  font-family: sans-serif;
+}
+.avh4--elm-beautiful-example--PageHeader {
+  font-weight: 200;
+  font-size: 32px;
+  line-height: 37px;
+  margin-top: 0;
+}
+.avh4--elm-beautiful-example--PageHeaderLink {
+  padding: 3px 8px 1px;
+  text-decoration: none;
+  vertical-align: bottom;
+  border-radius: 4px;
+}
+.avh4--elm-beautiful-example--PageHeaderLink:hover .avh4--elm-beautiful-example--PageHeaderLinkText {
+  text-decoration: underline;
+}
+.avh4--elm-beautiful-example--PageHeaderLinkText {
+  font-size: 12px;
+  line-height: 37px;
+  vertical-align: bottom;
+}
+.avh4--elm-beautiful-example--PageDescription {
+  font-weight: 200;
+  font-style: italic;
+  line-height: 1.5em;
+}
+.avh4--elm-beautiful-example--Example {
+  padding: 16px;
+  border-radius: 6px;
+  line-height: 1.5em;
+}
+.avh4--elm-beautiful-example--Example > *:first-child {
+  margin-top: 0;
+}
+.avh4--elm-beautiful-example--Example > *:last-child {
+  margin-bottom: 0;
+}
+.avh4--elm-beautiful-example--Example > * > *:first-child {
+  margin-top: 0;
+}
+.avh4--elm-beautiful-example--Example > * > *:last-child {
+  margin-bottom: 0;
+}
+.avh4--elm-beautiful-example--Example button {
+  cursor: pointer;
+  border-style: none;
+  border-radius: 2px;
+  height: 28px;
+  line-height: 28px;
+  padding: 0 16px;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  text-align: center;
+  text-decoration: none;
+  transition: 0.3s ease-out;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);
+  margin: 4px 0;
+}
+.avh4--elm-beautiful-example--Example button:hover {
+  box-shadow: 0 3px 3px 0 rgba(0,0,0,0.14), 0 1px 7px 0 rgba(0,0,0,0.12), 0 3px 1px -1px rgba(0,0,0,0.2);
+}
+.avh4--elm-beautiful-example--Example input {
+  padding: 4px;
+  border-radius: 4px;
+  border: 2px solid;
+  margin: 4px 0;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+.avh4--elm-beautiful-example--Example textarea {
+  padding: 4px;
+  border-radius: 4px;
+  border: 2px solid;
+  margin: 4px 0;
+  font-size: 16px;
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+}
+.avh4--elm-beautiful-example--Example pre {
+  line-height: 14px;
+  font-size: 12px;
+}
+""" ]

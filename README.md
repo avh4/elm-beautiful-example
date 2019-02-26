@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/avh4/elm-beautiful-example.svg?branch=master)](https://travis-ci.org/avh4/elm-beautiful-example)
+[![Latest Version](https://img.shields.io/elm-package/v/avh4/elm-beautiful-example.svg?label=version)](https://package.elm-lang.org/packages/avh4/elm-beautiful-example/latest/)
+
 # elm-beautiful-example
 
 This package makes it easy to create beautiful examples for your Elm projects

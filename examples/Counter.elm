@@ -6,9 +6,9 @@ import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
 
 
-main : Program Never Model Msg
+main : Program () Model Msg
 main =
-    BeautifulExample.program
+    BeautifulExample.document
         { title = "Counter"
         , details =
             Just """This shows how elm-beautiful-example can be used to
@@ -19,10 +19,14 @@ main =
         , githubUrl = Just "https://github.com/avh4/elm-beautiful-example"
         , documentationUrl = Just "http://package.elm-lang.org/packages/avh4/elm-beautiful-example/latest"
         }
-        { init = ( model, Cmd.none )
+        { init = \() -> ( init, Cmd.none )
         , update = update
         , subscriptions = \_ -> Sub.none
-        , view = view
+        , view =
+            \model ->
+                { title = "Counter example"
+                , body = [ view model ]
+                }
         }
 
 
@@ -38,8 +42,8 @@ type alias Model =
     }
 
 
-model : Model
-model =
+init : Model
+init =
     { counter = 1
     }
 
@@ -67,6 +71,6 @@ view : Model -> Html Msg
 view model =
     div []
         [ div [] [ button [ onClick Increment ] [ text "+" ] ]
-        , div [] [ text <| toString model.counter ]
+        , div [] [ text <| String.fromInt model.counter ]
         , div [] [ button [ onClick Decrement ] [ text "-" ] ]
         ]

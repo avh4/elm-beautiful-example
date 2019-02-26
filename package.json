@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "test": "elm make && npm run-script build-example && elm make --docs=documentation.json && npm run-script check && elm diff",
+    "build-example": "(cd examples && elm make Counter.elm)",
+    "check": "elm-format --validate ."
+  },
+  "devDependencies": {
+    "elm": "^0.19.0-bugfix6",
+    "elm-format": "^0.8.1"
+  }
+}
