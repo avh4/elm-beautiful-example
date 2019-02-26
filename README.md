@@ -21,18 +21,18 @@ Start with your not-so-pretty Elm example:
    elm-package install avh4/elm-beautiful-example
    ```
 
-2. Replace `Html.program` or `Html.beginnerProgram`
-with `BeautifulExample.program` or `BeautifulExample.beginnerProgram`
+2. Replace `Browser.sandbox`, `Browser.element`, `Browser.document` or `Browser.application`
+with `BeautifulExample.sandbox`, `BeautifulExample.element`, `BeautifulExample.document` or `BeautifulExample.application`
 and add the beautiful example config,
 filling in the fields as appropriate for your example:
 
    ```diff
    +import BeautifulExample
 
-    main : Program Never Model Msg
+    main : Program () Model Msg
     main =
-   -    Html.program
-   +    BeautifulExample.program
+   -    Browser.document
+   +    BeautifulExample.document
    +        { title = "Counter"
    +        , details =
    +            Just """This shows how elm-beautiful-example can be used to
@@ -43,7 +43,7 @@ filling in the fields as appropriate for your example:
    +        , githubUrl = Just "https://github.com/avh4/elm-beautiful-example"
    +        , documentationUrl = Just "http://package.elm-lang.org/packages/avh4/elm-beautiful-example/latest"
    +        }
-            { init = ( model, Cmd.none )
+            { init = \() -> ( initialModel, Cmd.none )
             , update = update
             , subscriptions = \_ -> Sub.none
             , view = view
