@@ -18,7 +18,7 @@ Start with your not-so-pretty Elm example:
 1. Install elm-beautiful-example
 
    ```sh
-   elm-package install avh4/elm-beautiful-example
+   elm install avh4/elm-beautiful-example
    ```
 
 2. Replace `Browser.sandbox`, `Browser.element`, `Browser.document` or `Browser.application`
