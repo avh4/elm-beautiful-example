@@ -3,7 +3,7 @@
     "name": "avh4/elm-beautiful-example",
     "summary": "Create beautiful examples to show off your Elm packages and projects",
     "license": "MIT",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "exposed-modules": [
         "BeautifulExample"
     ],
