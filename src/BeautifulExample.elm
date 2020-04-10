@@ -146,22 +146,16 @@ view config content =
                 |> Maybe.withDefault Color.gray
                 |> Color.toHsla
 
-        headingColor =
-            Color.hsl hue saturation (lightness * 0.7)
-
         detailsColor =
-            Color.hsl hue (saturation * 0.8) (lightness * 0.5 + 0.3)
-
-        backgroundColor =
-            Color.hsl hue (saturation * 1.2) (lightness * 0.05 + 0.93)
+            Color.hsl hue (saturation * 0.8) (lightness * 0.5 + 0.28)
     in
     div
         [ class [ Page ] ]
         [ stylesTag
         , customizableStylesTag config.maxWidth config.color
-        , h1 [ class [ PageHeader ] ] <|
+        , header [ class [ PageHeaderContainer ] ] <|
             List.concat
-                [ [ text config.title ]
+                [ [ h1 [ class [ PageHeader ] ] [ text config.title ] ]
                 , case config.documentationUrl of
                     Nothing ->
                         []
@@ -179,12 +173,14 @@ view config content =
                         , headerLink detailsColor githubIcon "Source" url
                         ]
                 ]
-        , p
-            [ class [ PageDescription ] ]
-            [ text (config.details |> Maybe.withDefault "") ]
-        , div
-            [ class [ Example ] ]
-            [ content ]
+        , main_ []
+            [ p
+                [ class [ PageDescription ] ]
+                [ text (config.details |> Maybe.withDefault "") ]
+            , div
+                [ class [ Example ] ]
+                [ content ]
+            ]
         ]
 
 
@@ -270,6 +266,7 @@ elmLogo color =
 
 type CssClasses
     = Page
+    | PageHeaderContainer
     | PageHeader
     | PageHeaderLink
     | PageHeaderLinkText
@@ -284,6 +281,9 @@ class classes =
             case cl of
                 Page ->
                     "Page"
+
+                PageHeaderContainer ->
+                    "PageHeaderContainer"
 
                 PageHeader ->
                     "PageHeader"
@@ -323,7 +323,7 @@ customizableStylesTag maxWidth themeColor =
             Color.hsl hue saturation (lightness * 0.7)
 
         detailsColor =
-            Color.hsl hue (saturation * 0.8) (lightness * 0.5 + 0.3)
+            Color.hsl hue (saturation * 0.8) (lightness * 0.5 + 0.28)
 
         backgroundColor =
             Color.hsl hue (saturation * 1.2) (lightness * 0.05 + 0.93)
@@ -388,11 +388,17 @@ stylesTag =
   padding: 48px 0;
   font-family: sans-serif;
 }
-.avh4--elm-beautiful-example--PageHeader {
+.avh4--elm-beautiful-example--PageHeaderContainer {
   font-weight: 200;
   font-size: 32px;
   line-height: 37px;
   margin-top: 0;
+}
+.avh4--elm-beautiful-example--PageHeader {
+  font-weight: 200;
+  font-size: 32px;
+  line-height: 37px;
+  display: inline;
 }
 .avh4--elm-beautiful-example--PageHeaderLink {
   padding: 3px 8px 1px;
@@ -405,7 +411,9 @@ stylesTag =
 }
 .avh4--elm-beautiful-example--PageHeaderLinkText {
   font-size: 12px;
+  font-weight: 200;
   line-height: 37px;
+  margin-top: 0;
   vertical-align: bottom;
 }
 .avh4--elm-beautiful-example--PageDescription {
