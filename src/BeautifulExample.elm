@@ -147,7 +147,7 @@ view config content =
                 |> Color.toHsla
 
         detailsColor =
-            Color.hsl hue (saturation * 0.8) (lightness * 0.5 + 0.3)
+            Color.hsl hue (saturation * 0.8) (lightness * 0.5 + 0.28)
     in
     div
         [ class [ Page ] ]
@@ -317,7 +317,7 @@ customizableStylesTag maxWidth themeColor =
             Color.hsl hue saturation (lightness * 0.7)
 
         detailsColor =
-            Color.hsl hue (saturation * 0.8) (lightness * 0.5 + 0.3)
+            Color.hsl hue (saturation * 0.8) (lightness * 0.5 + 0.28)
 
         backgroundColor =
             Color.hsl hue (saturation * 1.2) (lightness * 0.05 + 0.93)
